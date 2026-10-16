@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import pandas as pd
 
-from pydantic import ValidationError
+# from pydantic import ValidationError
 import joblib
 
 from .contracts import Entrada, Salida
@@ -18,11 +18,11 @@ def leer_csv(ruta: Path) -> list[Entrada]:
     d = df.to_dict(orient="index")
     l = []
     for elem in d.values():
-        try:
-            e = Entrada(**elem)
-            l.append(e)
-        except:
-            ValidationError(f'[X] Error: Unable to process line CSV')
+        # try:
+        e = Entrada(**elem)
+        l.append(e)
+        # except:
+        #     ValidationError(f'[X] Error: Unable to process line CSV')
 
     return l
 
@@ -44,11 +44,11 @@ def predecir(entrada: Entrada, modelo) -> Salida:
     state = modelo.predict([l])[0]
     probs = modelo.predict_proba([l])[0]
     
-    try:
-        s = Salida(id_lote=entrada.id_lote, estado=state, confianza=max(probs))
-        return s
-    except:
-        ValidationError("[X] ERROR: Unable to predict")
+    # try:
+    s = Salida(id_lote=entrada.id_lote, estado=state, confianza=max(probs))
+    return s
+    # except:
+    #     ValidationError("[X] ERROR: Unable to predict")
 
 
 def guardar_csv(resultados: list[Salida], ruta: Path) -> None:
@@ -71,7 +71,7 @@ def ejecutar(entrada: Path, modelo: Path, salida: Path) -> None:
 
 if __name__ == "__main__":
     ejecutar(
-        Path("data/raw/lotes.csv"),
+        Path("data/raw/lotes_invalidos.csv"),
         Path("models/modelo.joblib"),
         Path("resultados.csv"),
     )
